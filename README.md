@@ -1,6 +1,7 @@
 # Cloudflare Workers Production Guard
 
 Cloudflare Workers の本番環境（production）へのアクセス時に警告・自動戻りを行う Chrome 拡張です。
+利用は自己責任で！あくまでも最後の砦であり、機能する事を保証しません。
 
 ## 概要
 
