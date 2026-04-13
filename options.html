@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cloudflare Workers Production Guard 設定</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #ffffff;
+      --fg: #111111;
+      --muted: #666666;
+      --border: #d9d9d9;
+      --accent: #d93025;
+      --panel: #f7f7f7;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1f1f1f;
+        --fg: #f5f5f5;
+        --muted: #bbbbbb;
+        --border: #444444;
+        --accent: #ff6b6b;
+        --panel: #2b2b2b;
+      }
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+    }
+    .wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+    h1 {
+      margin: 0 0 12px;
+      font-size: 28px;
+    }
+    p {
+      line-height: 1.6;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    textarea, input[type="text"] {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      background: var(--bg);
+      color: var(--fg);
+      font: inherit;
+    }
+    textarea {
+      min-height: 180px;
+      resize: vertical;
+    }
+    .hint {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button.primary {
+      background: var(--accent);
+      color: white;
+    }
+    button.secondary {
+      background: transparent;
+      color: var(--fg);
+      border: 1px solid var(--border);
+    }
+    #status {
+      margin-top: 12px;
+      min-height: 24px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    code {
+      word-break: break-all;
+    }
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .check-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      flex: 0 0 auto;
+    }
+    .check-row label {
+      margin: 0;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Cloudflare Workers Production Guard</h1>
+    <p>本番 URL に一致した時に毎回ダイアログを出すプロジェクト名を登録します。</p>
+
+    <div class="panel">
+      <label for="projectNames">プロジェクト名</label>
+      <textarea id="projectNames" placeholder="1行に1件ずつ入力&#10;例&#10;sephiroth-giftedstyle&#10;my-prod-worker"></textarea>
+      <div class="hint">
+        1行に1つずつ入力して下さい。<br>
+        次の形式の URL に一致した時に警告します。<br>
+        <code>https://dash.cloudflare.com/*/登録プロジェクト名/production*</code>
+      </div>
+    </div>
+
+    <div class="panel">
+      <label for="dialogMessage">ダイアログ文言</label>
+      <input id="dialogMessage" type="text" />
+      <div class="hint">このメッセージは毎回の警告ダイアログに表示されます。</div>
+    </div>
+
+    <div class="panel">
+      <div class="check-row">
+        <input id="autoBackOnProduction" type="checkbox" />
+        <label for="autoBackOnProduction">本番環境にアクセスすると自動で前のボタンに戻る</label>
+      </div>
+      <div class="hint">オンの場合、警告ダイアログ表示後に <code>history.back()</code> を実行します。</div>
+    </div>
+
+    <div class="actions">
+      <button id="saveBtn" class="primary">保存</button>
+      <button id="resetBtn" class="secondary" type="button">初期値に戻す</button>
+    </div>
+
+    <div id="status" aria-live="polite"></div>
+  </div>
+  <script src="options.js"></script>
+</body>
+</html>

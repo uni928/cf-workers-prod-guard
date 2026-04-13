@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Cloudflare Workers Production Guard",
+  "version": "1.4.0",
+  "description": "Warns every time you open a registered Cloudflare Workers production URL, can automatically go back, and opens options from the extension action.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://dash.cloudflare.com/*"],
+  "background": {
+    "service_worker": "service_worker.js"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "action": {
+    "default_title": "CF Workers Production Guard",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://dash.cloudflare.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
